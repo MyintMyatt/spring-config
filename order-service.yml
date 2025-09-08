@@ -1,0 +1,4 @@
+server:
+  port: 8083
+app:
+  message: "Configuration for Order Service from Git"

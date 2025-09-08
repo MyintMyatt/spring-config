@@ -1,0 +1,4 @@
+server:
+  port: 8081
+app:
+  message: "Configuration for User Service from Git"
