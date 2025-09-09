@@ -2,3 +2,22 @@ server:
   port: 8083
 app:
   message: "Configuration for Order Service from Git"
+
+
+resilience4j.circuitbreaker:
+  instances:
+    external-service:
+      registerHealthIndicator: true
+      slidingWindowType: count_based
+      slidingWindowSize: 10
+      minimumNumberOfCalls: 5
+      failureRateThreshold: 50
+      waitDurationInOpenState: 10000
+      permittedNumberOfCallsInHalfOpenState: 3
+      slowCallRateThreshold: 50
+      slowCallDurationThreshold: 2000
+
+
+feign:
+  circuitbreaker:
+    enabled: true
