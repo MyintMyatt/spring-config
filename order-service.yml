@@ -3,25 +3,64 @@ server:
 app:
   message: "Configuration for Order Service from Git"
 
-
-resilience4j.circuitbreaker:
-  instances:
-    external-service:
-      registerHealthIndicator: true
-      slidingWindowType: count_based
-      slidingWindowSize: 10
-      minimumNumberOfCalls: 5
-      failureRateThreshold: 50
-      waitDurationInOpenState: 10000
-      permittedNumberOfCallsInHalfOpenState: 3
-      slowCallRateThreshold: 50
-      slowCallDurationThreshold: 2000
-
-
 feign:
   circuitbreaker:
     enabled: true
+  client:
+    config:
+      default:
+        connectTimeout: 2000
+        readTimeout: 3000
+
+resilience4j.circuitbreaker:
+    instances:
+      external-service:
+        registerHealthIndicator: true
+        slidingWindowType: count_based
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10000
+        permittedNumberOfCallsInHalfOpenState: 3
+        slowCallRateThreshold: 50
+        slowCallDurationThreshold: 2000
+        recordExceptions:
+          - feign.FeignException
+          - com.micro.OrderService.exception.CustomException
+          - java.net.ConnectException
+
 
 logging:
   level:
+    # Set the Feign client logger to WARN or ERROR to hide the stack traces for expected failures ( that mean error are handled)
+    # This will still show traces for more serious, unexpected errors.
+    feign.SynchronousMethodHandler: WARN
+
+    #keep the Resilience4j logs for debugging if you like
     io.github.resilience4j.circuitbreaker: DEBUG
+#
+#logging:
+#  level:
+#    io.github.resilience4j.circuitbreaker: DEBUG
+
+#resilience4j:
+#  circuitbreaker:
+#    instances:
+#      external-service:
+#        event-consumer-buffer-size: 10
+#        failure-rate-threshold: 50
+#        minimum-number-of-calls: 5
+#        automatic-transition-from-open-to-half-open-enabled: true
+#        wait-duration-in-open-state: 5s
+#        permitted-number-of-calls-in-half-open-state: 3
+#        sliding-window-size: 10
+#        sliding-window-type: COUNT_BASED
+#        recordExceptions:
+#          - feign.FeignException
+#          - feign.FeignException$ServiceUnavailable
+#          - java.io.IOException
+#          - java.util.concurrent.TimeoutException
+#
+#
+
+
